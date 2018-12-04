@@ -112,18 +112,23 @@ static void pack_rx(int epollfd, int event_epoll)
 
 int epoll_event(int i, int event, struct epoll_event events[], int server, int epollfd)
 {
-  int mask = events[i].events;
-  int eventfd = events[i].data.fd;
+  int mask = event;
+  int eventfd = epollfd;
 
   switch(mask){
+  case 0:
+    printf("received 0!!");
+    break;
   case EPOLLIN:
     //Check to make sure the server is the one to handle this
+    //    printf("EPOLLIN\n");
     if(eventfd == server){
       if(!accept_new_epoll_client(epollfd, eventfd)){
 	printf("error on accept_new_epoll_client in server");
 	exit(EXIT_FAILURE); }
     } else {
       //We be good and can receive their message
+      //printf("Show that we are getting into this portion to get packet");
       pack_rx(epollfd, eventfd); }
     break;
   case DISCONNECT:
